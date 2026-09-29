@@ -76,17 +76,20 @@ export default function PoweredBy() {
             alt="OkiToki"
             width={1254}
             height={1254}
-            sizes="140px"
+            sizes="114px"
           />
         </span>
       </div>
 
-      {/* La hoja de arriba: su esquina está cortada por el doblez */}
+      {/* La hoja de arriba: transparente, comparte el fondo grande del
+          sitio; su esquina queda cortada por el doblez */}
       <div className="powered-sheet-shadow">
-        <div className="powered-sheet">
-          <span className="powered-hint">tirá de la esquina</span>
-        </div>
+        <div className="powered-sheet" />
       </div>
+
+      {/* Guía de arrastre: fuera de la hoja (que recorta con clip-path) y
+          por debajo de la lengueta */}
+      <span className="powered-hint">tirá de la esquina</span>
 
       {/* El revés del papel doblado: la lengueta que se agarra */}
       <div className="powered-flap-shadow">

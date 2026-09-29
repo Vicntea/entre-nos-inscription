@@ -370,20 +370,27 @@ body {
 
 /* =====================================================
    LENGÜETA "POWERED BY OKITOKI" — esquina inferior derecha
-   Arriba: la hoja de la página con la esquina doblada (la
-   lengueta). Abajo: la página siguiente con el crédito, que
-   se descubre tirando de la esquina. Toda la geometría sale
-   de --peel (0 = doblada, 1 = abierta), que escribe PoweredBy.tsx.
+   En reposo lo único que se ve es la lengueta: el revés del
+   papel doblado. La hoja de arriba ya no se pinta, así que la
+   esquina comparte el fondo grande de "ENTRE NOS" en lugar de
+   taparlo con un panel. Al tirar de la lengueta se despliega la
+   página de abajo con el crédito. Toda la geometría sale de
+   --peel (0 = doblada, 1 = abierta), que escribe PoweredBy.tsx.
    ===================================================== */
 .powered-corner {
   --peel: 0;
-  --box-w: clamp(280px, 26vw, 336px);
-  --box-h: clamp(132px, 14vw, 176px);
-  /* Largo de la lengueta en reposo y tope del despliegue */
-  --rest-fold: clamp(78px, 8vw, 98px);
-  --fold-max: calc(var(--box-w) * 1.3);
-  --fold-w: calc(var(--rest-fold) + var(--peel) * (var(--fold-max) - var(--rest-fold)));
-  /* El doblez es 3:1 (más ancho que alto): una lengueta bien larga */
+  /* La caja se ajusta a la lengueta: es lo único que se ve (y la
+     superficie agarrable) en reposo. */
+  --box-w: clamp(190px, 16vw, 214px);
+  --box-h: clamp(104px, 9.5vw, 130px);
+  --rest-fold: clamp(72px, 7.2vw, 90px);
+  /* 1.5 y no 1.3: con la caja más chica hace falta desplegar más doblez
+     para que el crédito entre completo en el triángulo que deja libre. */
+  --fold-max: calc(var(--box-w) * 1.5);
+  --fold-w: calc(
+    var(--rest-fold) + 
+    var(--peel) * (var(--fold-max) - var(--rest-fold))
+  );
   --fold-h: calc(var(--fold-w) / 3);
   --flap-h: calc(var(--fold-w) * 0.6);
   --paper-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -399,6 +406,9 @@ body {
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+
+  /* IMPORTANTE */
+  background: transparent;
 }
 
 /* ---- Página de abajo: el crédito escondido ---- */
@@ -410,8 +420,18 @@ body {
   align-items: flex-end;
   justify-content: flex-end;
   gap: 4px;
-  padding: 0 14px 14px;
+  padding: 0 12px 12px;
   overflow: hidden;
+  /* La hoja de arriba ya no oculta nada (es transparente), así que el
+     crédito queda escondido bajo el doblez: se recorta con el mismo
+     triángulo que el doblez deja libre (las dos patas miden --fold-w y
+     --fold-h) y se descubre a medida que se tira de la lengueta. */
+  clip-path: polygon(
+    100% calc(100% - var(--fold-h)),
+    calc(100% - var(--fold-w)) 100%,
+    100% 100%
+  );
+  transition: clip-path 0.55s var(--paper-ease);
   background: #ebe6db;
   background-image: radial-gradient(
     130% 130% at 100% 100%,
@@ -431,7 +451,7 @@ body {
 /* Recorta el aire que trae el PNG (1254x1254) para que entre en la esquina */
 .powered-under-mark {
   position: relative;
-  width: 78px;
+  width: 56px;
   aspect-ratio: 1.7;
   overflow: hidden;
 }
@@ -439,28 +459,33 @@ body {
 .powered-under-logo {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  margin-top: -20px;
+  width: 210%;
+  height: 210%;
   object-fit: cover;
   /* El PNG trae fondo claro: multiply lo funde con el papel de abajo */
   mix-blend-mode: multiply;
 }
 
-/* ---- Hoja de arriba: la esquina está cortada por el doblez ---- */
+/* ---- Hoja de arriba: es la página, pero ya sin pintar (deja ver el fondo
+        grande del sitio). Su recorte marca dónde cae el doblez; el triángulo
+        que deja libre lo espeja .powered-under. ---- */
 .powered-sheet-shadow {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* El filtro va acá y no en la hoja: clip-path recorta también el filtro,
-     así la sombra de la hoja levantada sigue la silueta y cae sobre la
-     página de abajo. */
-  filter: drop-shadow(4px 5px 7px rgba(20, 10, 25, 0.42));
+  /* Sin sombra: la hoja no se pinta, así que no queda silueta que proyecte. */
+  filter: none;
 }
-
 .powered-sheet {
   position: absolute;
   inset: 0;
-  background: var(--paper);
+
+  /* Mismo fondo que el fondo grande de "ENTRE NOS": en lugar de pintar un
+     panel, se deja ver la fotografía que corre por detrás. Lo único que
+     queda de la esquina es la lengueta doblada. */
+  background: transparent;
+
   clip-path: polygon(
     0 0,
     100% 0,
@@ -468,26 +493,22 @@ body {
     calc(100% - var(--fold-w)) 100%,
     0 100%
   );
+
   transition: clip-path 0.55s var(--paper-ease);
 }
 
-/* Grano del papel */
-.powered-sheet::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noisePeel'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noisePeel)' opacity='.8'/%3E%3C/svg%3E");
-}
-
+/* Guía de arrastre: queda justo arriba de la lengueta y ya no sobre un
+   panel, así que usa el mismo recurso que los textos del sitio (blanco
+   sobre la fotografía, con difference para que se lea siempre). */
 .powered-hint {
   position: absolute;
   right: 20px;
-  bottom: 72px;
+  bottom: calc(var(--rest-fold) * 0.6 + 14px);
   font-size: 8px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  color: #fff;
+  mix-blend-mode: difference;
   opacity: calc(0.42 - var(--peel) * 0.42);
 }
 
@@ -534,6 +555,7 @@ body {
   cursor: grabbing;
 }
 
+.powered-corner.is-pulling .powered-under,
 .powered-corner.is-pulling .powered-sheet,
 .powered-corner.is-pulling .powered-flap-shadow {
   transition: none;
@@ -553,8 +575,8 @@ body {
   }
 
   .powered-corner {
-    --box-w: 218px;
-    --box-h: 118px;
+    --box-w: 18px;
+    --box-h: 18px;
     --rest-fold: 66px;
     /* Se despega del borde inferior para no chocar con la lengueta de inscripción */
     bottom: 38px;
@@ -581,22 +603,4 @@ body {
 }
 
 
-/* =====================================================
-   ACCESIBILIDAD — menos movimiento
-   ===================================================== */
-@media (prefers-reduced-motion: reduce) {
-  .glitch,
-  .grain,
-  .join-tab-tip,
-  .join-dialog-body {
-    animation: none;
-  }
-
-  .logo,
-  .join-tab,
-  .powered-sheet,
-  .powered-flap-shadow {
-    transition: none;
-  }
-}
 
