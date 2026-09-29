@@ -397,9 +397,9 @@ body {
 
   position: fixed;
   right: 0;
+  width: 320px;
   bottom: 0;
   z-index: 35;
-  width: var(--box-w);
   height: var(--box-h);
   color: #111;
   cursor: grab;
@@ -446,6 +446,7 @@ body {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   opacity: 0.6;
+  margin-bottom: 10px;
 }
 
 /* Recorta el aire que trae el PNG (1254x1254) para que entre en la esquina */
@@ -459,9 +460,9 @@ body {
 .powered-under-logo {
   position: absolute;
   inset: 0;
-  margin-top: -20px;
-  width: 210%;
-  height: 210%;
+  margin-right: 30px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   /* El PNG trae fondo claro: multiply lo funde con el papel de abajo */
   mix-blend-mode: multiply;

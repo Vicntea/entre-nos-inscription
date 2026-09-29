@@ -76,7 +76,7 @@ export default function PoweredBy() {
             alt="OkiToki"
             width={1254}
             height={1254}
-            sizes="114px"
+            sizes="140px"
           />
         </span>
       </div>
