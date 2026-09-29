@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ENTRE NOS</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap');
+
+        /* =====================================================
+           VARIABLES
+        ===================================================== */
+        :root {
+            --purple: #8052a0;
+            --paper: #f4f1eb;
+            --black: #111;
+        }
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+        * {
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            cursor: crosshair;
+            background: #111;
+        }
+
+        body {
+            font-family: "DM Mono", monospace;
+        }
+
+        /* =====================================================
+           BACKGROUND
+        ===================================================== */
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: #111;
+        }
+
+        .background-image {
+            position: absolute;
+            inset: -5%;
+            width: 110%;
+            height: 110%;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            filter: grayscale(1) contrast(1.35) brightness(.70);
+            transform: scale(1.03);
+            opacity: 1;
+            transition: opacity .5s ease, transform .9s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .background-image.next {
+            opacity: 0;
+        }
+
+        /* Viñeta */
+        .background::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, .55) 100%);
+        }
+
+        /* =====================================================
+           CANVAS DEL PAPEL
+        ===================================================== */
+        #paperCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* =====================================================
+           LOGO
+        ===================================================== */
+        .logo {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 15;
+            width: min(38vw, 390px);
+            min-width: 270px;
+            aspect-ratio: 1 / 1;
+            background: var(--paper);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, .05), 0 20px 80px rgba(0, 0, 0, .25);
+            transition: transform .3s cubic-bezier(0.1, 0.7, 0.1, 1), filter .2s ease;
+        }
+
+        .logo::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0, 0, 0, .025) 4px);
+        }
+
+        .logo-content {
+            position: relative;
+            color: #080808;
+            font-family: "Times New Roman", Times, serif;
+            font-size: clamp(50px, 7vw, 92px);
+            line-height: .76;
+            font-weight: 900;
+            letter-spacing: -7px;
+            text-align: center;
+            transform: scaleX(.92);
+        }
+
+        .logo-content span {
+            display: block;
+        }
+
+        /* =====================================================
+           TOP
+        ===================================================== */
+        .top {
+            position: fixed;
+            left: 30px;
+            right: 30px;
+            top: 25px;
+            z-index: 30;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            mix-blend-mode: difference;
+            font-size: 11px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .counter {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* =====================================================
+           BOTTOM
+        ===================================================== */
+        .bottom {
+            position: fixed;
+            left: 30px;
+            right: 30px;
+            bottom: 25px;
+            z-index: 30;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            color: white;
+            mix-blend-mode: difference;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+        }
+
+        .instruction {
+            max-width: 260px;
+            line-height: 1.5;
+        }
+
+        .scroll {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+
+        /* =====================================================
+           GLITCH MÁS SUAVE Y CONTROLADO
+        ===================================================== */
+        .glitch {
+            animation: glitch .85s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+                filter: grayscale(1) contrast(1.35) brightness(.70);
+            }
+            15% {
+                transform: translate(-5px, 2px) skewX(-1deg);
+                filter: grayscale(1) contrast(1.5) drop-shadow(4px 0 rgba(255, 0, 80, .45));
+            }
+            30% {
+                transform: translate(4px, -2px) skewX(1deg);
+                filter: grayscale(1) contrast(1.4) drop-shadow(-4px 0 rgba(0, 255, 255, .45));
+            }
+            45% {
+                transform: translate(-2px, 1px);
+                filter: grayscale(1) contrast(1.35);
+            }
+            60% {
+                transform: translate(3px, -1px);
+                filter: grayscale(1) contrast(1.5) drop-shadow(2px 0 rgba(255, 0, 80, .3));
+            }
+            75% {
+                transform: translate(-1px, 0);
+                filter: grayscale(1) contrast(1.35);
+            }
+            100% {
+                transform: translate(0);
+                filter: grayscale(1) contrast(1.35) brightness(.70);
+            }
+        }
+
+        /* =====================================================
+           SCANLINES & GRAIN
+        ===================================================== */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 25;
+            pointer-events: none;
+            opacity: .08;
+            background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255, 255, 255, .15) 3px);
+        }
+
+        .grain {
+            position: fixed;
+            inset: -50%;
+            width: 200%;
+            height: 200%;
+            z-index: 20;
+            pointer-events: none;
+            opacity: .12;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.8'/%3E%3C/svg%3E");
+            animation: grain .22s steps(2) infinite;
+        }
+
+        @keyframes grain {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-2%, 1%); }
+            50% { transform: translate(1%, -2%); }
+            75% { transform: translate(2%, 2%); }
+            100% { transform: translate(-1%, -1%); }
+        }
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+        @media (max-width: 600px) {
+            .logo {
+                width: 72vw;
+                min-width: 0;
+            }
+            .logo-content {
+                font-size: 20vw;
+            }
+            .top, .bottom {
+                left: 15px;
+                right: 15px;
+            }
+            .instruction {
+                max-width: 180px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- FOTOGRAFÍAS DE FONDO -->
+    <div class="background">
+        <div id="imageA" class="background-image"></div>
+        <div id="imageB" class="background-image next"></div>
+    </div>
+
+    <!-- CANVA INTERACTIVO -->
+    <canvas id="paperCanvas"></canvas>
+
+    <!-- LOGO -->
+    <div class="logo" id="logo">
+        <div class="logo-content">
+            <span>EN</span>
+            <span>TRE</span>
+            <span>NOS</span>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="top">
+        <div>ENTRE NOS — ARCHIVO FEMINISTA</div>
+        <div class="counter"><span id="counter">01</span> / 06</div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="bottom">
+        <div class="instruction">mueve el cursor<br>rompe el papel</div>
+        <div class="scroll">archivo / manifiesto / memoria</div>
+    </div>
+
+    <!-- EFECTOS -->
+    <div class="scanlines"></div>
+    <div class="grain"></div>
+
+    <script>
+        /* =====================================================
+           FOTOGRAFÍAS
+        ===================================================== */
+        const images = [
+            "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=2200&q=85",
+            "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=2200&q=85",
+            "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=2200&q=85",
+            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=2200&q=85",
+            "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=2200&q=85",
+            "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=2200&q=85"
+        ];
+
+        /* =====================================================
+           SLIDESHOW
+        ===================================================== */
+        const imageA = document.getElementById("imageA");
+        const imageB = document.getElementById("imageB");
+        const counter = document.getElementById("counter");
+
+        let currentImage = 0;
+        let showingA = true;
+        imageA.style.backgroundImage = `url("${images[0]}")`;
+
+        function changeImage() {
+            currentImage = (currentImage + 1) % images.length;
+            const nextImage = showingA ? imageB : imageA;
+            const current = showingA ? imageA : imageB;
+
+            nextImage.style.backgroundImage = `url("${images[currentImage]}")`;
+
+            current.classList.add("glitch");
+            nextImage.classList.add("glitch");
+            nextImage.classList.remove("next");
+
+            setTimeout(() => {
+                current.classList.add("next");
+                current.classList.remove("glitch");
+                nextImage.classList.remove("glitch");
+                showingA = !showingA;
+            }, 850);
+
+            counter.textContent = String(currentImage + 1).padStart(2, "0");
+        }
+
+        setInterval(changeImage, 6000);
+
+        /* =====================================================
+           CANVAS DE PAPEL Y TRIZADO CONTINUO
+        ===================================================== */
+        const canvas = document.getElementById("paperCanvas");
+        const ctx = canvas.getContext("2d");
+        let dpr = window.devicePixelRatio || 1;
+
+        function resizeCanvas() {
+            dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = window.innerWidth + "px";
+            canvas.style.height = window.innerHeight + "px";
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        /* =====================================================
+           SISTEMA DE TRIZADURA QUE SIGUE EL MOUSE
+        ===================================================== */
+        const pathHistory = [];
+        const MAX_PATH_AGE = 2500; // Duración de las grietas en ms
+
+        document.addEventListener("mousemove", (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            const lastPoint = pathHistory[pathHistory.length - 1];
+
+            if (!lastPoint || Math.hypot(x - lastPoint.x, y - lastPoint.y) > 8) {
+                // Ramificaciones secundarias aleatorias a lo largo del trazo
+                const branches = [];
+                const branchCount = Math.floor(Math.random() * 2) + 1;
+
+                for (let b = 0; b < branchCount; b++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const length = 12 + Math.random() * 28;
+                    const bPoints = [{ x, y }];
+
+                    let bx = x;
+                    let by = y;
+                    const subSteps = 2 + Math.floor(Math.random() * 2);
+
+                    for (let s = 0; s < subSteps; s++) {
+                        bx += Math.cos(angle) * (length / subSteps) + (Math.random() - .5) * 8;
+                        by += Math.sin(angle) * (length / subSteps) + (Math.random() - .5) * 8;
+                        bPoints.push({ x: bx, y: by });
+                    }
+                    branches.push(bPoints);
+                }
+
+                pathHistory.push({
+                    x,
+                    y,
+                    time: performance.now(),
+                    jitterX: (Math.random() - .5) * 6,
+                    jitterY: (Math.random() - .5) * 6,
+                    branches
+                });
+            }
+        });
+
+        /* =====================================================
+           DIBUJAR PAPEL Y GRIETAS
+        ===================================================== */
+        function drawPaper() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const now = performance.now();
+
+            // Limpiar canvas
+            ctx.clearRect(0, 0, w, h);
+
+            // 1. Papel Morado base
+            ctx.fillStyle = "#8052a0";
+            ctx.fillRect(0, 0, w, h);
+
+            // Textura sutil del papel
+            ctx.globalAlpha = .04;
+            for (let i = 0; i < 200; i++) {
+                const rx = Math.random() * w;
+                const ry = Math.random() * h;
+                ctx.fillStyle = Math.random() > .5 ? "#fff" : "#000";
+                ctx.fillRect(rx, ry, 2, 2);
+            }
+            ctx.globalAlpha = 1;
+
+            // Filtrar puntos antiguos
+            while (pathHistory.length > 0 && (now - pathHistory[0].time) > MAX_PATH_AGE) {
+                pathHistory.shift();
+            }
+
+            if (pathHistory.length < 2) return;
+
+            /* -------------------------------------------------
+               A. REVELAR FOTO A TRAVÉS DEL TRIZADO (destination-out)
+            ------------------------------------------------- */
+            ctx.save();
+            ctx.globalCompositeOperation = "destination-out";
+
+            for (let i = 0; i < pathHistory.length - 1; i++) {
+                const p1 = pathHistory[i];
+                const p2 = pathHistory[i + 1];
+
+                const age = now - p2.time;
+                const lifeProgress = 1 - (age / MAX_PATH_AGE);
+                if (lifeProgress <= 0) continue;
+
+                //variable tamaño
+                const size = 42;
+                const width = (size + Math.random() * 10) * lifeProgress;
+
+                ctx.beginPath();
+                ctx.lineWidth = width;
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                ctx.moveTo(p1.x + p1.jitterX, p1.y + p1.jitterY);
+                ctx.lineTo(p2.x + p2.jitterX, p2.y + p2.jitterY);
+                ctx.stroke();
+
+                // Círculo rasgado puntual
+                ctx.beginPath();
+                ctx.arc(p2.x, p2.y, width * 0.7, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+
+            /* -------------------------------------------------
+               B. DIBUJAR BORDES DE GRIETAS Y LÍNEAS DE TRIZADURA
+            ------------------------------------------------- */
+            ctx.save();
+
+            for (let i = 0; i < pathHistory.length - 1; i++) {
+                const p1 = pathHistory[i];
+                const p2 = pathHistory[i + 1];
+
+                const age = now - p2.time;
+                const lifeProgress = 1 - (age / MAX_PATH_AGE);
+                if (lifeProgress <= 0) continue;
+
+                // Sombra y profundidad de grieta
+                ctx.strokeStyle = "rgba(20, 10, 25, " + (0.85 * lifeProgress) + ")";
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(p1.x + p1.jitterX, p1.y + p1.jitterY);
+                ctx.lineTo(p2.x + p2.jitterX, p2.y + p2.jitterY);
+                ctx.stroke();
+
+                // Borde de luz/fibra de papel rasgado
+                ctx.strokeStyle = "rgba(255, 255, 255, " + (0.4 * lifeProgress) + ")";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(p1.x + p1.jitterX + 1.5, p1.y + p1.jitterY - 1.5);
+                ctx.lineTo(p2.x + p2.jitterX + 1.5, p2.y + p2.jitterY - 1.5);
+                ctx.stroke();
+
+                // Ramificaciones
+                for (const branch of p2.branches) {
+                    ctx.strokeStyle = "rgba(30, 15, 35, " + (0.7 * lifeProgress) + ")";
+                    ctx.lineWidth = 1.2;
+                    ctx.beginPath();
+
+                    for (let b = 0; b < branch.length; b++) {
+                        const pt = branch[b];
+                        if (b === 0) ctx.moveTo(pt.x, pt.y);
+                        else ctx.lineTo(pt.x, pt.y);
+                    }
+                    ctx.stroke();
+                }
+            }
+
+            ctx.restore();
+        }
+
+        /* =====================================================
+           ANIMATION LOOP
+        ===================================================== */
+        function animate() {
+            drawPaper();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        /* =====================================================
+           REACCIÓN DEL LOGO AL MOUSE
+        ===================================================== */
+        const logo = document.getElementById("logo");
+
+        document.addEventListener("mousemove", (event) => {
+            const rect = logo.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const dx = event.clientX - centerX;
+            const dy = event.clientY - centerY;
+            const distance = Math.hypot(dx, dy);
+
+            if (distance < 220) {
+                const intensity = (220 - distance) / 220;
+                logo.style.transform = `
+                    translate(
+                        calc(-50% + ${dx * intensity * .03}px),
+                        calc(-50% + ${dy * intensity * .03}px)
+                    )
+                    rotate(${dx * intensity * .012}deg)
+                `;
+            }
+        });
+
+        /* =====================================================
+           GLITCH ALEATORIO TEMPORIZADO
+        ===================================================== */
+        setInterval(() => {
+            if (Math.random() > .5) {
+                const active = showingA ? imageA : imageB;
+                active.classList.add("glitch");
+
+                setTimeout(() => {
+                    active.classList.remove("glitch");
+                }, 850);
+            }
+        }, 4500);
+    </script>
+
+</body>
+
+</html>

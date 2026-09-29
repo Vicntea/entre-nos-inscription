@@ -1,26 +1,602 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #111111;
+  --foreground: #f4f1eb;
+  --purple: #8052a0;
+  --paper: #f4f1eb;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-dm-mono);
+  --font-mono: var(--font-dm-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-dm-mono), Arial, Helvetica, sans-serif;
 }
+
+/* =====================================================
+   LOGO — reacciona sutilmente al mouse (ver Logo.tsx)
+   ===================================================== */
+.logo {
+  transform: translate(-50%, -50%);
+  transition: filter 0.2s ease;
+  will-change: transform;
+}
+
+.logo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0, 0, 0, 0.025) 4px);
+}
+
+/* =====================================================
+   FONDO — fotografías en gris con crossfade
+   ===================================================== */
+.bg-image {
+  position: absolute;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: grayscale(1) contrast(1.35) brightness(0.7);
+  transform: scale(1.03);
+  transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.bg-image.next {
+  opacity: 0;
+}
+
+.bg-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* =====================================================
+   GLITCH
+   ===================================================== */
+.glitch {
+  animation: glitch 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+    filter: grayscale(1) contrast(1.35) brightness(0.7);
+  }
+  15% {
+    transform: translate(-5px, 2px) skewX(-1deg);
+    filter: grayscale(1) contrast(1.5) drop-shadow(4px 0 rgba(255, 0, 80, 0.45));
+  }
+  30% {
+    transform: translate(4px, -2px) skewX(1deg);
+    filter: grayscale(1) contrast(1.4) drop-shadow(-4px 0 rgba(0, 255, 255, 0.45));
+  }
+  45% {
+    transform: translate(-2px, 1px);
+    filter: grayscale(1) contrast(1.35);
+  }
+  60% {
+    transform: translate(3px, -1px);
+    filter: grayscale(1) contrast(1.5) drop-shadow(2px 0 rgba(255, 0, 80, 0.3));
+  }
+  75% {
+    transform: translate(-1px, 0);
+    filter: grayscale(1) contrast(1.35);
+  }
+  100% {
+    transform: translate(0);
+    filter: grayscale(1) contrast(1.35) brightness(0.7);
+  }
+}
+
+/* =====================================================
+   SCANLINES & GRANO
+   ===================================================== */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+  opacity: 0.08;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255, 255, 255, 0.15) 3px);
+}
+
+.grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.8'/%3E%3C/svg%3E");
+  animation: grain 0.22s steps(2) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 1%); }
+  50% { transform: translate(1%, -2%); }
+  75% { transform: translate(2%, 2%); }
+  100% { transform: translate(-1%, -1%); }
+}
+
+/* =====================================================
+   LENGUETA — "¿Quieres ser parte del cambio?"
+   ===================================================== */
+.join-tab {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 30px 16px;
+  border: none;
+  cursor: pointer;
+  background: var(--paper);
+  color: #111;
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  text-align: center;
+  clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%);
+  transform: translate(-50%, calc(100% - 36px));
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.join-tab:hover,
+.join-tab:focus-visible {
+  transform: translate(-50%, 0);
+}
+
+.join-tab:focus-visible .join-tab-label {
+  text-decoration: underline;
+}
+
+.join-tab-tip {
+  font-size: 10px;
+  animation: tab-tip-bob 2.4s ease-in-out infinite;
+}
+
+.join-tab-label {
+  white-space: nowrap;
+  opacity: 0.85;
+}
+
+@keyframes tab-tip-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* =====================================================
+   DIÁLOGO DE INSCRIPCIÓN
+   ===================================================== */
+.join-dialog {
+  /* Centrado explícito y estable: la caja nunca se desplaza del centro
+     aunque el contenido sea más alto que el viewport (ver .join-dialog-body). */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(92vw, 460px);
+  max-width: 100%;
+  height: fit-content;
+  max-height: min(88vh, 660px);
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: visible;
+  color: #111;
+}
+
+.join-dialog::backdrop {
+  background: rgba(8, 6, 10, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.join-dialog-body {
+  position: relative;
+  background: var(--paper);
+  color: #111;
+  padding: 34px 34px 30px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+  max-height: inherit;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  animation: dialog-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.join-dialog-close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  z-index: 2;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #111;
+  padding: 6px;
+  line-height: 1;
+}
+
+.join-dialog-close:hover {
+  color: var(--purple);
+}
+
+.join-dialog-title {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 900;
+  font-size: clamp(26px, 4vw, 34px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.join-dialog-title span {
+  color: var(--purple);
+}
+
+.join-dialog-sub {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.join-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.join-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.join-field input,
+.join-field select {
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 13px;
+  letter-spacing: normal;
+  text-transform: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid #111;
+  border-radius: 0;
+  padding: 6px 2px;
+  outline: none;
+  color: #111;
+}
+
+.join-field input:focus,
+.join-field select:focus {
+  border-bottom-color: var(--purple);
+  box-shadow: 0 1.5px 0 var(--purple);
+}
+
+.join-field input[type="number"]::-webkit-outer-spin-button,
+.join-field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.join-field input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.join-submit {
+  margin-top: 4px;
+  background: #111;
+  color: var(--paper);
+  border: none;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.join-submit:hover:not(:disabled) {
+  background: var(--purple);
+}
+
+.join-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.join-error {
+  color: #b3123e;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.join-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.join-success-title {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 900;
+  font-size: 24px;
+}
+
+/* =====================================================
+   LENGÜETA "POWERED BY OKITOKI" — esquina inferior derecha
+   Arriba: la hoja de la página con la esquina doblada (la
+   lengueta). Abajo: la página siguiente con el crédito, que
+   se descubre tirando de la esquina. Toda la geometría sale
+   de --peel (0 = doblada, 1 = abierta), que escribe PoweredBy.tsx.
+   ===================================================== */
+.powered-corner {
+  --peel: 0;
+  --box-w: clamp(280px, 26vw, 336px);
+  --box-h: clamp(132px, 14vw, 176px);
+  /* Largo de la lengueta en reposo y tope del despliegue */
+  --rest-fold: clamp(78px, 8vw, 98px);
+  --fold-max: calc(var(--box-w) * 1.3);
+  --fold-w: calc(var(--rest-fold) + var(--peel) * (var(--fold-max) - var(--rest-fold)));
+  /* El doblez es 3:1 (más ancho que alto): una lengueta bien larga */
+  --fold-h: calc(var(--fold-w) / 3);
+  --flap-h: calc(var(--fold-w) * 0.6);
+  --paper-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  width: var(--box-w);
+  height: var(--box-h);
+  color: #111;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---- Página de abajo: el crédito escondido ---- */
+.powered-under {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 0 14px 14px;
+  overflow: hidden;
+  background: #ebe6db;
+  background-image: radial-gradient(
+    130% 130% at 100% 100%,
+    rgba(17, 17, 17, 0.18),
+    rgba(17, 17, 17, 0.02) 40%,
+    transparent 66%
+  );
+}
+
+.powered-under-label {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* Recorta el aire que trae el PNG (1254x1254) para que entre en la esquina */
+.powered-under-mark {
+  position: relative;
+  width: 78px;
+  aspect-ratio: 1.7;
+  overflow: hidden;
+}
+
+.powered-under-logo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* El PNG trae fondo claro: multiply lo funde con el papel de abajo */
+  mix-blend-mode: multiply;
+}
+
+/* ---- Hoja de arriba: la esquina está cortada por el doblez ---- */
+.powered-sheet-shadow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* El filtro va acá y no en la hoja: clip-path recorta también el filtro,
+     así la sombra de la hoja levantada sigue la silueta y cae sobre la
+     página de abajo. */
+  filter: drop-shadow(4px 5px 7px rgba(20, 10, 25, 0.42));
+}
+
+.powered-sheet {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--fold-h)),
+    calc(100% - var(--fold-w)) 100%,
+    0 100%
+  );
+  transition: clip-path 0.55s var(--paper-ease);
+}
+
+/* Grano del papel */
+.powered-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noisePeel'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noisePeel)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+.powered-hint {
+  position: absolute;
+  right: 20px;
+  bottom: 72px;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: calc(0.42 - var(--peel) * 0.42);
+}
+
+/* ---- El revés del papel doblado: la lengueta ---- */
+.powered-flap-shadow {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--fold-w);
+  height: var(--flap-h);
+  pointer-events: none;
+  filter: drop-shadow(-2px -3px 6px rgba(20, 10, 25, 0.4));
+  transition:
+    width 0.55s var(--paper-ease),
+    height 0.55s var(--paper-ease);
+}
+
+/*
+ * La lengueta es el triángulo espejado del doblez: con un doblez 3:1 sus
+ * vértices caen siempre en 0%/100% · 100%/44.44% · 80%/0%.
+ */
+.powered-flap {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0% 100%, 100% 44.44%, 80% 0%);
+  background: linear-gradient(to top left, #fdfcf8 0%, #f2ede3 45%, #dcd5c6 100%);
+}
+
+.powered-flap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noisePeel'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noisePeel)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+/* Al pasar el mouse se levanta un poco: se nota que se puede agarrar */
+.powered-corner:hover {
+  --peel: 0.16;
+}
+
+/* Mientras se arrastra: 1:1 con el mouse, sin transición */
+.powered-corner.is-pulling {
+  cursor: grabbing;
+}
+
+.powered-corner.is-pulling .powered-sheet,
+.powered-corner.is-pulling .powered-flap-shadow {
+  transition: none;
+}
+
+/* =====================================================
+   MÓVIL
+   ===================================================== */
+@media (max-width: 600px) {
+  .logo {
+    width: 72vw;
+    min-width: 0;
+  }
+
+  .logo h1 {
+    font-size: 20vw;
+  }
+
+  .powered-corner {
+    --box-w: 218px;
+    --box-h: 118px;
+    --rest-fold: 66px;
+    /* Se despega del borde inferior para no chocar con la lengueta de inscripción */
+    bottom: 38px;
+  }
+
+  .powered-under {
+    padding: 0 11px 11px;
+  }
+
+  .powered-under-mark {
+    width: 58px;
+  }
+
+  .powered-hint {
+    right: 14px;
+    bottom: 58px;
+  }
+}
+
+@media (max-width: 480px) {
+  .join-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =====================================================
+   ACCESIBILIDAD — menos movimiento
+   ===================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .glitch,
+  .grain,
+  .join-tab-tip,
+  .join-dialog-body {
+    animation: none;
+  }
+
+  .logo,
+  .join-tab,
+  .powered-sheet,
+  .powered-flap-shadow {
+    transition: none;
+  }
+}
+
