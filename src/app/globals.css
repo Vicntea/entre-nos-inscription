@@ -18,6 +18,24 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-dm-mono), Arial, Helvetica, sans-serif;
+
+  /* Móvil: sin zoom por doble toque, sin destello azul al tocar, sin
+     "pull to refresh" (pelear con el trizado del dedo) y sin seleccionar
+     texto sin querer al arrastrar sobre el papel. El diálogo sí selecciona. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Escenario a pantalla completa.
+   Con `h-screen` la barra del navegador móvil recorta el fondo: `100dvh`
+   sigue al viewport visible. Se deja `100vh` primero como respaldo para
+   navegadores sin `dvh`. */
+.stage {
+  height: 100vh;
+  height: 100dvh;
 }
 
 /* =====================================================
@@ -186,6 +204,15 @@ body {
   50% { transform: translateY(-3px); }
 }
 
+/* En un dispositivo táctil no hay hover que despliegue la lengueta: se deja
+   a la vista con el texto completo (en PC sigue guardada hasta pasar el
+   mouse, como estaba). */
+@media (hover: none) {
+  .join-tab {
+    transform: translate(-50%, 0);
+  }
+}
+
 /* =====================================================
    DIÁLOGO DE INSCRIPCIÓN
    ===================================================== */
@@ -199,6 +226,9 @@ body {
   max-width: 100%;
   height: fit-content;
   max-height: min(88vh, 660px);
+  /* Con la barra del navegador móvil, `dvh` evita que el pie del diálogo
+     quede fuera de la pantalla. */
+  max-height: min(88dvh, 660px);
   padding: 0;
   border: none;
   background: transparent;
@@ -385,8 +415,9 @@ body {
   --box-h: clamp(104px, 9.5vw, 130px);
   --rest-fold: clamp(72px, 7.2vw, 90px);
   /* 1.5 y no 1.3: con la caja más chica hace falta desplegar más doblez
-     para que el crédito entre completo en el triángulo que deja libre. */
-  --fold-max: calc(var(--box-w) * 1.5);
+     para que el crédito entre completo en el triángulo que deja libre.
+     Ahora 2.25: la cola del modo extendido queda 1,5 veces más larga. */
+  --fold-max: calc(var(--box-w) * 2.25);
   --fold-w: calc(
     var(--rest-fold) + 
     var(--peel) * (var(--fold-max) - var(--rest-fold))
@@ -567,33 +598,77 @@ body {
    ===================================================== */
 @media (max-width: 600px) {
   .logo {
-    width: 72vw;
+    width: 64vw;
     min-width: 0;
   }
 
   .logo h1 {
-    font-size: 20vw;
+    font-size: 19vw;
   }
 
+  /* La lengueta "powered by" necesita una esquina legible y agarrable: la
+     caja la define el ancho real, y --box-w solo alimenta --fold-max (el
+     tope del despliegue). Con --box-w chico el pliegue se achicaba en vez
+     de extenderse. */
   .powered-corner {
-    --box-w: 18px;
-    --box-h: 18px;
-    --rest-fold: 66px;
-    /* Se despega del borde inferior para no chocar con la lengueta de inscripción */
-    bottom: 38px;
+    width: 250px;
+    --box-w: 107px;
+    --box-h: 92px;
+    --rest-fold: 56px;
+    /* Se despega del borde inferior para no chocar con la lengueta de
+       inscripción (que en móvil se ve entera) ni con la barra del celular */
+    bottom: calc(62px + env(safe-area-inset-bottom, 0px));
   }
 
   .powered-under {
-    padding: 0 11px 11px;
+    padding: 0 10px 10px;
+  }
+
+  .powered-under-label {
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    margin-bottom: 6px;
   }
 
   .powered-under-mark {
-    width: 58px;
+    width: 46px;
   }
 
   .powered-hint {
-    right: 14px;
-    bottom: 58px;
+    right: 10px;
+    bottom: calc(var(--rest-fold) * 0.6 + 10px);
+    font-size: 7px;
+  }
+
+  .join-tab {
+    padding: 8px 18px calc(12px + env(safe-area-inset-bottom, 0px));
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  /* iOS hace zoom automático al enfocar un campo de menos de 16px */
+  .join-field input,
+  .join-field select {
+    font-size: 16px;
+  }
+
+  .join-dialog-body {
+    padding: 24px 20px 22px;
+  }
+
+  /* La caja del diálogo se centra contra el viewport visible, no contra el
+     alto total de la página. */
+  .join-dialog {
+    max-height: min(86dvh, 660px);
+  }
+
+  /* Área táctil cómoda del botón de cerrar */
+  .join-dialog-close {
+    top: 6px;
+    right: 8px;
+    width: 44px;
+    height: 44px;
+    font-size: 17px;
   }
 }
 

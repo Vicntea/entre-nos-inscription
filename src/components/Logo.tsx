@@ -93,7 +93,12 @@ export default function Logo() {
       startLoop();
     };
 
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    // En pantallas táctiles no hay puntero que seguir: el logo queda quieto y
+    // nos ahorramos el listener y el rAF (batería en el celular).
+    const hayPuntero = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (hayPuntero) {
+      window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    }
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, { passive: true });
 

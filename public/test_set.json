@@ -1,0 +1,325 @@
+[
+  {
+    "id": "dte-p1-01",
+    "author": "dte-1",
+    "topic": "boletas",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "Tenemos un cliente que vende tarjetas de prepago en muchas ventanillas y emitir una boleta por venta es inviable. ¿Puede emitir una sola boleta al día?",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        "La regla general es emitir una boleta por cada operación",
+        "Emitir una boleta diaria que resuma las ventas requiere autorización expresa del SII",
+        "El SII lo autorizó a Metro-Pago para la venta de tarjetas MetroMuv (Res. Ex. SII N° 111 de 2026)",
+        "La autorización obliga a llevar un registro de las operaciones diarias"
+      ],
+      "must_not_include": [
+        "Que cualquier contribuyente puede emitir una boleta diaria sin autorización"
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": 2026,
+        "number": 111,
+        "page": 2,
+        "quote": "AUTORÍZASE a la EMPRESA METRO EMISORAS DE MEDIOS DE PAGO S.A. a la emisión diaria de una boleta electrónica..."
+      }
+    ],
+    "review": {
+      "reviewer": "dte-2",
+      "verdict": "approved",
+      "notes": "Caso de ejemplo completo."
+    }
+  },
+  {
+    "id": "dte-p1-02",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  },
+  {
+    "id": "dte-p1-03",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  },
+  {
+    "id": "dte-p1-04",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  },
+  {
+    "id": "dte-p1-05",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  },
+  {
+    "id": "dte-p1-06",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  },
+  {
+    "id": "dte-p1-07",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  },
+  {
+    "id": "dte-p1-08",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  },
+  {
+    "id": "dte-p1-09",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  },
+  {
+    "id": "dte-p1-10",
+    "author": "",
+    "topic": "",
+    "split": "test",
+    "as_of": "2026-09-28",
+    "question": "",
+    "history": [],
+    "expected_behavior": "answer",
+    "expected_answer": {
+      "must_include": [
+        ""
+      ],
+      "must_not_include": [
+        ""
+      ]
+    },
+    "references": [
+      {
+        "doc_id": "Res. Ex. SII N° 111",
+        "year": null,
+        "number": null,
+        "page": null,
+        "quote": ""
+      }
+    ],
+    "review": {
+      "reviewer": "",
+      "verdict": "",
+      "notes": ""
+    }
+  }
+]
