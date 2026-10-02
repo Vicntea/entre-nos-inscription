@@ -24,6 +24,10 @@
 .DS_Store
 *.pem
 
+# cache de scripts de assets (descargas y demas)
+/.cache
+__pycache__/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

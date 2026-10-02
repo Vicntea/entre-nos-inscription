@@ -55,19 +55,30 @@ body {
 }
 
 /* =====================================================
-   FONDO — fotografías en gris con crossfade
+   FONDO — fondos pre-renderizados con crossfade
+   El gris, el contraste, el brillo y el glitch vienen horneados en el asset
+   (ver scripts/generar-fondos.py), así que acá no queda ningún `filter` sobre
+   una capa a pantalla completa.
    ===================================================== */
 .bg-image {
   position: absolute;
   inset: -5%;
   width: 110%;
   height: 110%;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  filter: grayscale(1) contrast(1.35) brightness(0.7);
   transform: scale(1.03);
   transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* El <picture> y su <img> llenan la capa; el recorte lo hace object-fit. */
+.bg-image picture,
+.bg-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bg-image img {
+  object-fit: cover;
 }
 
 .bg-image.next {
@@ -81,43 +92,8 @@ body {
   background: radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.55) 100%);
 }
 
-/* =====================================================
-   GLITCH
-   ===================================================== */
-.glitch {
-  animation: glitch 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
-
-@keyframes glitch {
-  0% {
-    transform: translate(0);
-    filter: grayscale(1) contrast(1.35) brightness(0.7);
-  }
-  15% {
-    transform: translate(-5px, 2px) skewX(-1deg);
-    filter: grayscale(1) contrast(1.5) drop-shadow(4px 0 rgba(255, 0, 80, 0.45));
-  }
-  30% {
-    transform: translate(4px, -2px) skewX(1deg);
-    filter: grayscale(1) contrast(1.4) drop-shadow(-4px 0 rgba(0, 255, 255, 0.45));
-  }
-  45% {
-    transform: translate(-2px, 1px);
-    filter: grayscale(1) contrast(1.35);
-  }
-  60% {
-    transform: translate(3px, -1px);
-    filter: grayscale(1) contrast(1.5) drop-shadow(2px 0 rgba(255, 0, 80, 0.3));
-  }
-  75% {
-    transform: translate(-1px, 0);
-    filter: grayscale(1) contrast(1.35);
-  }
-  100% {
-    transform: translate(0);
-    filter: grayscale(1) contrast(1.35) brightness(0.7);
-  }
-}
+/* El glitch ahora viene horneado en el fondo (antes se animaba acá `filter` con
+   `drop-shadow` sobre una capa a pantalla completa, que era lo más caro). */
 
 /* =====================================================
    SCANLINES & GRANO
@@ -131,11 +107,14 @@ body {
   background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255, 255, 255, 0.15) 3px);
 }
 
+/* La capa del grano se anima con `transform`, así que no hace falta que mida
+   200%x200% del viewport: con 112% alcanza para que el ~2% del recorrido no
+   deje ver los bordes, y la textura deja de ocupar ~30 MB en DPR 2. */
 .grain {
   position: fixed;
-  inset: -50%;
-  width: 200%;
-  height: 200%;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
   z-index: 20;
   pointer-events: none;
   opacity: 0.12;

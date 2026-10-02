@@ -20,6 +20,27 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Fondos animados (assets pre-renderizados)
+
+Los fondos del hero son imágenes **WebP animadas** con los efectos ya horneados
+dentro del archivo (escala de grises + contraste + brillo + glitch), servidas con
+`<picture>` y un **GIF estático** de respaldo. Así el navegador ya no aplica
+`filter` ni anima `drop-shadow` sobre una capa a pantalla completa, que era lo
+que consumía CPU.
+
+Se regeneran con:
+
+```bash
+npm run assets:fondos                 # los 5 (webp + gif de respaldo)
+python scripts/generar-fondos.py --limit 1
+python scripts/generar-fondos.py --quality 55 --frame-ms 150
+python scripts/generar-fondos.py --no-gif
+```
+
+El script descarga las fotos de Unsplash, las procesa con Pillow y escribe
+`public/images/backgrounds/bg-0X.webp|gif`. Las descargas quedan cacheadas en
+`.cache/fondos/` (ignorado por git).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

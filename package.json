@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "assets:fondos": "python scripts/generar-fondos.py"
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
