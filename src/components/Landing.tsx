@@ -39,7 +39,7 @@ export default function Landing() {
           rompe el papel
         </div>
         {/* Se ubica arriba de la lengueta "powered by" de la esquina */}
-        <div className="mb-[150px] [writing-mode:vertical-rl] rotate-180 min-[601px]:mb-[122px]">
+        <div className="mb-[88px] [writing-mode:vertical-rl] rotate-180 min-[601px]:mb-[122px]">
           archivo / manifiesto / memoria
         </div>
       </footer>

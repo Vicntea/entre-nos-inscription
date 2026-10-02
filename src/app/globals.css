@@ -615,9 +615,9 @@ body {
     --box-w: 107px;
     --box-h: 92px;
     --rest-fold: 56px;
-    /* Se despega del borde inferior para no chocar con la lengueta de
-       inscripción (que en móvil se ve entera) ni con la barra del celular */
-    bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+    /* Pegada a la esquina inferior derecha: solo se respeta la barra/notch
+       del celular (safe-area), sin el despegue extra que la hacía flotar. */
+    bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .powered-under {

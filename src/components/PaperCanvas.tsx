@@ -245,8 +245,9 @@ export default function PaperCanvas() {
     let hasPending = false;
 
     // En pantallas táctiles el toque ya no deja la mancha redonda: abre una
-    // rotura. El arrastre del dedo sigue trizando igual que el mouse en PC.
-    // `?tactil=1` fuerza el modo táctil para poder probarlo desde la compu.
+    // rotura. El arrastre del dedo ya no triza (solo el toque); en PC el trazo
+    // sigue al cursor igual que antes. `?tactil=1` fuerza el modo táctil para
+    // poder probarlo desde la compu.
     const forzarTactil = new URLSearchParams(window.location.search).get("tactil") === "1";
     const tactilQuery = window.matchMedia("(hover: none), (pointer: coarse)");
     let tactil = forzarTactil || tactilQuery.matches;
@@ -333,7 +334,7 @@ export default function PaperCanvas() {
       }
     };
 
-    /** Acumula el trazo del puntero (mouse en PC, dedo arrastrando en móvil). */
+    /** Acumula el trazo del puntero (solo mouse en PC; en móvil ver handlePointerMove). */
     const samplePointer = (event: PointerEvent) => {
       pointerX = event.clientX;
       pointerY = event.clientY;
@@ -378,6 +379,10 @@ export default function PaperCanvas() {
     };
 
     const handlePointerMove = (event: PointerEvent) => {
+      // En táctil el arrastre del dedo ya no deja rastro: el trizado solo
+      // aparece al tocar la pantalla (ver handlePointerDown). En PC el trazo
+      // sigue pegado al cursor, como siempre.
+      if (tactil) return;
       samplePointer(event);
     };
 
