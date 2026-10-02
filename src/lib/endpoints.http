@@ -1,0 +1,11 @@
+### Apps Script
+POST https://script.google.com/macros/s/AKfycbwSK0Nrzan8b4VkPvDCSKbG429IiAn43P0Q8EteEY7p6Z1dYTD9YSPo3GEokSgZWJmH/exec
+Content-Type: application/json
+
+{
+  "nombre": "Test",
+  "apellido": "REST",
+  "email": "test@test.com",
+  "edad": 23,
+  "genero": "M"
+}

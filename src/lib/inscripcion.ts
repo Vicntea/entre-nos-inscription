@@ -15,7 +15,7 @@ export const INSCRIPCION_ENDPOINT =
  * el envío por bueno: no tiene sentido dejar a la persona esperando a los
  * servidores de Google (y con `no-cors` la respuesta igual es opaca).
  */
-export const INSCRIPCION_TIMEOUT_MS = 3000;
+export const INSCRIPCION_TIMEOUT_MS = 9000;
 
 /** Campos tal como los espera el script (ver curl de referencia). */
 type InscripcionPayload = {
@@ -43,7 +43,11 @@ type InscripcionPayload = {
  *   No se aborta la petición: sigue viajando y el registro suele completarse
  *   igual en la planilla.
  */
-export async function guardarInscripcion(data: InscripcionData): Promise<void> {
+export async function guardarInscripcion(
+  data: InscripcionData
+): Promise<void> {
+  // console.log("1. Entrando a guardarInscripcion");
+
   const payload: InscripcionPayload = {
     nombre: data.nombre,
     apellido: data.apellido,
@@ -52,23 +56,40 @@ export async function guardarInscripcion(data: InscripcionData): Promise<void> {
     genero: data.genero,
   };
 
-  const request = fetch(INSCRIPCION_ENDPOINT, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload),
-    cache: "no-store",
-    redirect: "follow",
-  });
+  // console.log("2. Payload:", payload);
+  // console.log("3. Endpoint:", INSCRIPCION_ENDPOINT);
 
-  // La petición queda en vuelo aunque dejemos de esperarla: esto evita que una
-  // falla posterior (después del timeout) quede como rechazo sin manejar.
-  request.catch(() => {});
+  try {
+    // console.log("4. Antes del fetch");
 
-  await Promise.race([
-    request,
-    new Promise<void>((resolve) => {
-      setTimeout(resolve, INSCRIPCION_TIMEOUT_MS);
-    }),
-  ]);
+    const response = await fetch(INSCRIPCION_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain",
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+      redirect: "follow",
+    });
+
+    // console.log("5. Fetch terminó");
+    // console.log("Status:", response.status);
+    // console.log("Type:", response.type);
+    // console.log("URL final:", response.url);
+
+    const text = await response.text();
+
+    // console.log("6. Respuesta:", text);
+
+    const result = JSON.parse(text);
+
+    // console.log("7. JSON:", result);
+
+    if (!result.success) {
+      throw new Error(result.error || "Error al guardar la inscripción");
+    }
+  } catch (error) {
+    console.error("8. ERROR:", error);
+    throw error;
+  }
 }
