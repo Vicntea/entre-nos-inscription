@@ -396,7 +396,7 @@ body {
   /* 1.5 y no 1.3: con la caja más chica hace falta desplegar más doblez
      para que el crédito entre completo en el triángulo que deja libre.
      Ahora 2.25: la cola del modo extendido queda 1,5 veces más larga. */
-  --fold-max: calc(var(--box-w) * 2.25);
+  --fold-max: calc(var(--box-w) * 1.50);
   --fold-w: calc(
     var(--rest-fold) + 
     var(--peel) * (var(--fold-max) - var(--rest-fold))
