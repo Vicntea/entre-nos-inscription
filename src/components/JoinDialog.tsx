@@ -170,7 +170,7 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
                 {/* data URL generado en el cliente: no pasa por el optimizador */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={qrDataUrl} alt="Código QR de tu entrada" width={200} height={200} />
-                <p className="join-qr-caption">Mostrá este código en la entrada</p>
+                <p className="join-qr-caption">Muestra este código en la entrada</p>
               </div>
             )}
             <button type="button" className="join-submit" onClick={onClose}>
