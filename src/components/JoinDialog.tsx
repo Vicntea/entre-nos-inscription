@@ -7,7 +7,9 @@ import {
   type FormEvent,
   type MouseEvent as ReactMouseEvent,
 } from "react";
+import Image from "next/image";
 import { guardarInscripcion, type InscripcionData } from "@/lib/inscripcion";
+import { generateQr } from "@/utils/generateQr";
 
 /**
  * `value` en minúsculas porque es lo que espera el Apps Script
@@ -35,17 +37,41 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
   // Lo último que se intentó enviar: al reintentar (o al volver del error)
   // repuebla el formulario, que se desmonta cuando se muestra la pantalla de falla.
   const [lastSubmission, setLastSubmission] = useState<InscripcionData | null>(null);
+  // Toggle descriptivo de la obra (texto + afiche)
+  const [showInfo, setShowInfo] = useState(false);
+  // uuid confirmado y su QR (data URL) para mostrarlo en la pantalla de éxito
+  const [uuid, setUuid] = useState<string | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (open && !dialog.open) {
       setStatus("idle");
+      setShowInfo(false);
+      setUuid(null);
+      setQrDataUrl(null);
       dialog.showModal();
     } else if (!open && dialog.open) {
       dialog.close();
     }
   }, [open]);
+
+  // Genera el QR de la entrada apenas se conoce el uuid (tras confirmar el alta).
+  useEffect(() => {
+    if (!uuid) return;
+    let active = true;
+    generateQr(uuid)
+      .then((dataUrl) => {
+        if (active) setQrDataUrl(dataUrl);
+      })
+      .catch(() => {
+        if (active) setQrDataUrl(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [uuid]);
 
   // Cierra solo si la pulsación empezó fuera del contenido (no al seleccionar texto)
   const handleBackdropMouseDown = (event: ReactMouseEvent<HTMLDialogElement>) => {
@@ -74,8 +100,9 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
     try {
       setStatus("sending");
       setLastSubmission(inscripcion);
-      await guardarInscripcion(inscripcion);
+      const { uuid: nuevoUuid } = await guardarInscripcion(inscripcion);
       form.reset();
+      setUuid(nuevoUuid);
       setStatus("success");
     } catch {
       setStatus("error");
@@ -102,10 +129,50 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
         </h2>
         <p className="join-dialog-sub">Déjanos tus datos y te contactaremos</p>
 
+        {status !== "success" && (
+          <>
+            <button
+              type="button"
+              className="join-info-toggle"
+              aria-expanded={showInfo}
+              aria-controls="join-info"
+              onClick={() => setShowInfo((prev) => !prev)}
+            >
+              <span>Registrate a una obra en el Cine UACH · 30 de diciembre</span>
+              <span className="join-info-toggle-icon" aria-hidden="true">
+                {showInfo ? "−" : "+"}
+              </span>
+            </button>
+
+            <div id="join-info" className="join-info" hidden={!showInfo}>
+              <p className="join-info-text">
+                Vas a registrarte para la obra que se presenta en el Cine UACH el 30 de diciembre.
+                Al terminar te damos un código QR: es tu entrada, no lo compartas.
+              </p>
+              <Image
+                className="join-poster"
+                src="/images/legitimas_afiche.png"
+                alt="Afiche de la obra en el Cine UACH el 30 de diciembre"
+                width={590}
+                height={834}
+                sizes="(max-width: 600px) 70vw, 260px"
+              />
+            </div>
+          </>
+        )}
+
         {status === "success" ? (
           <div className="join-success" role="status">
             <p className="join-success-title">¡Gracias por sumarte!</p>
             <p>Tu inscripción quedó registrada. Muy pronto nos pondremos en contacto contigo.</p>
+            {qrDataUrl && (
+              <div className="join-qr">
+                {/* data URL generado en el cliente: no pasa por el optimizador */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={qrDataUrl} alt="Código QR de tu entrada" width={200} height={200} />
+                <p className="join-qr-caption">Mostrá este código en la entrada</p>
+              </div>
+            )}
             <button type="button" className="join-submit" onClick={onClose}>
               Cerrar
             </button>

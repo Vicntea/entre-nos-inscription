@@ -277,6 +277,62 @@ body {
   margin-bottom: 4px;
 }
 
+/* ---- Toggle descriptivo: a qué se está inscribiendo la persona ---- */
+.join-info-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1.5px solid #111;
+  background: transparent;
+  color: #111;
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1.35;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.join-info-toggle:hover,
+.join-info-toggle:focus-visible {
+  background: #111;
+  color: var(--paper);
+  outline: none;
+}
+
+.join-info-toggle-icon {
+  flex: none;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.join-info {
+  margin-top: 12px;
+  padding: 14px;
+  background: rgba(17, 17, 17, 0.04);
+  border-left: 2px solid var(--purple);
+  animation: dialog-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.join-info-text {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.join-poster {
+  display: block;
+  width: min(70%, 260px);
+  height: auto;
+  margin: 14px auto 0;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
+}
+
 .join-form {
   display: flex;
   flex-direction: column;
@@ -369,6 +425,31 @@ body {
   font-family: "Times New Roman", Times, serif;
   font-weight: 900;
   font-size: 24px;
+}
+
+/* ---- QR de la entrada (se muestra al confirmar la inscripción) ---- */
+.join-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 14px;
+  background: #fff;
+  box-shadow: 0 0 0 1.5px #111;
+}
+
+.join-qr img {
+  display: block;
+  width: 200px;
+  height: 200px;
+}
+
+.join-qr-caption {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
 }
 
 /* Pantalla de falla: reemplaza al formulario cuando el envío falla */
@@ -694,6 +775,186 @@ body {
   .join-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* =====================================================
+   REVISOR DE ENTRADAS (móvil) — /mobile-revisor-entradas
+   ===================================================== */
+.scan-root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 24px) 20px
+    calc(env(safe-area-inset-bottom, 0px) + 24px);
+}
+
+.scan-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scan-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.scan-title {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 900;
+  font-size: clamp(28px, 9vw, 40px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.scan-sub {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--purple);
+}
+
+.scan-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.scan-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.scan-stage.is-active .scan-video {
+  opacity: 1;
+}
+
+/* Retícula central sobre el video mientras escanea */
+.scan-frame {
+  position: absolute;
+  inset: 12%;
+  border: 2px solid rgba(244, 241, 235, 0.85);
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  animation: scan-frame-pulse 2s ease-in-out infinite;
+}
+
+@keyframes scan-frame-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.scan-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.4;
+}
+
+.scan-placeholder-mark {
+  font-size: 34px;
+}
+
+.scan-hint {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  opacity: 0.75;
+}
+
+.scan-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  text-align: center;
+  background: var(--paper);
+  color: #111;
+  animation: dialog-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.scan-panel-title {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.scan-panel-detail {
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.scan-panel.is-ok {
+  border-left: 6px solid #1f7a3d;
+}
+
+.scan-panel.is-warn {
+  border-left: 6px solid #b3801a;
+}
+
+.scan-panel.is-bad {
+  border-left: 6px solid #b3123e;
+}
+
+/* El botón queda pegado abajo para usarlo con una sola mano */
+.scan-actions {
+  margin-top: auto;
+}
+
+.scan-button {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  background: var(--paper);
+  color: #111;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.scan-button:hover:not(:disabled),
+.scan-button:focus-visible {
+  background: var(--purple);
+  color: var(--paper);
+  outline: none;
+}
+
+.scan-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 

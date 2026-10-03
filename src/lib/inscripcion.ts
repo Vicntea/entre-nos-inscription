@@ -6,6 +6,25 @@ export type InscripcionData = {
   genero: string;
 };
 
+/** Respuesta del Apps Script al guardar una inscripción. */
+export type InscripcionResponse = {
+  success: boolean;
+  message?: string;
+  /** Identificador de la inscripción: es lo que viaja dentro del QR. */
+  uuid: string;
+  error?: string;
+};
+
+/** Respuesta del Apps Script al marcar una entrada como presente. */
+export type PresenteResponse = {
+  success: boolean;
+  message?: string;
+  uuid?: string;
+  /** `true` cuando la fila ya estaba marcada (o se acaba de marcar). */
+  presente?: boolean;
+  error?: string;
+};
+
 /** Web App de Google Apps Script que recibe las inscripciones. */
 export const INSCRIPCION_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbwSK0Nrzan8b4VkPvDCSKbG429IiAn43P0Q8EteEY7p6Z1dYTD9YSPo3GEokSgZWJmH/exec";
@@ -52,7 +71,7 @@ type InscripcionPayload = {
  */
 export async function guardarInscripcion(
   data: InscripcionData
-): Promise<void> {
+): Promise<InscripcionResponse> {
   // console.log("1. Entrando a guardarInscripcion");
 
   const payload: InscripcionPayload = {
@@ -73,7 +92,7 @@ export async function guardarInscripcion(
       throw new Error("Fallo simulado: SIMULAR_FALLA_INSCRIPCION");
     }
 
-    const response = await fetch(INSCRIPCION_ENDPOINT, {
+    const response = await fetch(`${INSCRIPCION_ENDPOINT}?action=inscripcion`, {
       method: "POST",
       headers: {
         "Content-Type": "text/plain",
@@ -92,15 +111,46 @@ export async function guardarInscripcion(
 
     // console.log("6. Respuesta:", text);
 
-    const result = JSON.parse(text);
+    const result = JSON.parse(text) as InscripcionResponse;
 
     // console.log("7. JSON:", result);
 
     if (!result.success) {
       throw new Error(result.error || "Error al guardar la inscripción");
     }
+
+    return result;
   } catch (error) {
     console.error("8. ERROR:", error);
     throw error;
   }
+}
+
+/**
+ * Marca una entrada como presente en la planilla (acción `?action=presente`).
+ *
+ * Es la llamada que dispara el revisor de entradas al escanear el QR: el `uuid`
+ * viaja como texto plano en el cuerpo y el script lo lee con
+ * `JSON.parse(e.postData.contents)`.
+ *
+ * Igual que {@link guardarInscripcion}, se usa `Content-Type: text/plain` para
+ * que la petición sea "simple" y no dispare el preflight `OPTIONS` que Apps
+ * Script no responde; la respuesta sí vuelve como JSON legible.
+ *
+ * No lanza si el UUID no existe o ya estaba presente: eso viene en el cuerpo
+ * (`success: false`) y lo decide quien muestra la pantalla.
+ */
+export async function marcarPresente(uuid: string): Promise<PresenteResponse> {
+  const response = await fetch(`${INSCRIPCION_ENDPOINT}?action=presente`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+    body: JSON.stringify({ uuid }),
+    cache: "no-store",
+    redirect: "follow",
+  });
+
+  const text = await response.text();
+  return JSON.parse(text) as PresenteResponse;
 }
