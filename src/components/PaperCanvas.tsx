@@ -16,7 +16,7 @@ type CrackPoint = {
 
 const MAX_PATH_AGE = 2500; // Duración de las grietas en ms
 const MIN_STEP_DISTANCE = 5; // Distancia mínima entre puntos registrados
-const REVEAL_SIZE = 42; // Grosor base del revelado
+const REVEAL_SIZE = 62; // Grosor base del revelado
 const MAX_POINTS = 260; // Puntos vivos máximos (coste acotado por frame)
 const PAPER_COLOR = "#8052a0";
 const NOISE_TILE = 640; // Lado del tile de textura del papel
