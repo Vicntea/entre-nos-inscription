@@ -354,12 +354,6 @@ body {
   cursor: wait;
 }
 
-.join-error {
-  color: #b3123e;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-}
-
 .join-success {
   display: flex;
   flex-direction: column;
@@ -375,6 +369,51 @@ body {
   font-family: "Times New Roman", Times, serif;
   font-weight: 900;
   font-size: 24px;
+}
+
+/* Pantalla de falla: reemplaza al formulario cuando el envío falla */
+.join-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.join-fallback-title {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 900;
+  font-size: 24px;
+  color: #b3123e;
+}
+
+.join-fallback-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.join-fallback-cancel {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #111;
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.join-fallback-cancel:hover {
+  opacity: 1;
+  color: var(--purple);
 }
 
 /* =====================================================

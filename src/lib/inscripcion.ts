@@ -17,6 +17,13 @@ export const INSCRIPCION_ENDPOINT =
  */
 export const INSCRIPCION_TIMEOUT_MS = 9000;
 
+/**
+ * Bandera de desarrollo: en `true`, {@link guardarInscripcion} lanza un error
+ * sin llegar a llamar al Apps Script, para probar el menú de falla del diálogo.
+ * Dejala en `false` para producción.
+ */
+export const SIMULAR_FALLA_INSCRIPCION = false;
+
 /** Campos tal como los espera el script (ver curl de referencia). */
 type InscripcionPayload = {
   nombre: string;
@@ -61,6 +68,10 @@ export async function guardarInscripcion(
 
   try {
     // console.log("4. Antes del fetch");
+
+    if (SIMULAR_FALLA_INSCRIPCION) {
+      throw new Error("Fallo simulado: SIMULAR_FALLA_INSCRIPCION");
+    }
 
     const response = await fetch(INSCRIPCION_ENDPOINT, {
       method: "POST",

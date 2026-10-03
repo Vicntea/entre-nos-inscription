@@ -32,6 +32,9 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const pressStartedOnBackdrop = useRef(false);
   const [status, setStatus] = useState<Status>("idle");
+  // Lo último que se intentó enviar: al reintentar (o al volver del error)
+  // repuebla el formulario, que se desmonta cuando se muestra la pantalla de falla.
+  const [lastSubmission, setLastSubmission] = useState<InscripcionData | null>(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -70,6 +73,7 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
 
     try {
       setStatus("sending");
+      setLastSubmission(inscripcion);
       await guardarInscripcion(inscripcion);
       form.reset();
       setStatus("success");
@@ -106,6 +110,22 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
               Cerrar
             </button>
           </div>
+        ) : status === "error" ? (
+          <div className="join-fallback" role="alert">
+            <p className="join-fallback-title">No pudimos registrarte</p>
+            <p>
+              Puede haber sido un problema de conexión. Tus datos quedaron cargados: probá de
+              nuevo.
+            </p>
+            <div className="join-fallback-actions">
+              <button type="button" className="join-submit" onClick={() => setStatus("idle")}>
+                Reintentar
+              </button>
+              <button type="button" className="join-fallback-cancel" onClick={onClose}>
+                Cerrar
+              </button>
+            </div>
+          </div>
         ) : (
           <form className="join-form" onSubmit={handleSubmit} aria-busy={status === "sending"}>
             <label className="join-field">
@@ -115,6 +135,7 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
                 name="correo"
                 placeholder="tu@correo.com"
                 autoComplete="email"
+                defaultValue={lastSubmission?.correo ?? ""}
                 required
               />
             </label>
@@ -122,22 +143,42 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
             <div className="join-grid">
               <label className="join-field">
                 <span>Nombre</span>
-                <input type="text" name="nombre" autoComplete="given-name" required />
+                <input
+                  type="text"
+                  name="nombre"
+                  autoComplete="given-name"
+                  defaultValue={lastSubmission?.nombre ?? ""}
+                  required
+                />
               </label>
               <label className="join-field">
                 <span>Apellido</span>
-                <input type="text" name="apellido" autoComplete="family-name" required />
+                <input
+                  type="text"
+                  name="apellido"
+                  autoComplete="family-name"
+                  defaultValue={lastSubmission?.apellido ?? ""}
+                  required
+                />
               </label>
             </div>
 
             <div className="join-grid">
               <label className="join-field">
                 <span>Edad</span>
-                <input type="number" name="edad" min={14} max={99} inputMode="numeric" required />
+                <input
+                  type="number"
+                  name="edad"
+                  min={14}
+                  max={99}
+                  inputMode="numeric"
+                  defaultValue={lastSubmission?.edad ?? ""}
+                  required
+                />
               </label>
               <label className="join-field">
                 <span>Género</span>
-                <select name="genero" defaultValue="" required>
+                <select name="genero" defaultValue={lastSubmission?.genero ?? ""} required>
                   <option value="" disabled>
                     Selecciona…
                   </option>
@@ -149,12 +190,6 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
                 </select>
               </label>
             </div>
-
-            {status === "error" && (
-              <p className="join-error" role="alert">
-                No pudimos enviar tus datos. Revisá tu conexión e inténtalo de nuevo.
-              </p>
-            )}
 
             <button type="submit" className="join-submit" disabled={status === "sending"}>
               {status === "sending" ? "Enviando…" : "Quiero ser parte"}
