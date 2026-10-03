@@ -10,6 +10,8 @@ import {
 import Image from "next/image";
 import { guardarInscripcion, type InscripcionData } from "@/lib/inscripcion";
 import { generateQr } from "@/utils/generateQr";
+import { descargarEntradaPdf } from "@/utils/ticketPdf";
+import EntradaTicket from "./EntradaTicket";
 
 /**
  * `value` en minúsculas porque es lo que espera el Apps Script
@@ -42,6 +44,10 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
   // uuid confirmado y su QR (data URL) para mostrarlo en la pantalla de éxito
   const [uuid, setUuid] = useState<string | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  // Nodo (fuera de pantalla) del ticket que se captura para generar el PDF.
+  const ticketRef = useRef<HTMLDivElement | null>(null);
+  const [generandoPdf, setGenerandoPdf] = useState(false);
+  const [pdfError, setPdfError] = useState(false);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -51,6 +57,8 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
       setShowInfo(false);
       setUuid(null);
       setQrDataUrl(null);
+      setGenerandoPdf(false);
+      setPdfError(false);
       dialog.showModal();
     } else if (!open && dialog.open) {
       dialog.close();
@@ -109,7 +117,26 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
     }
   }
 
+  // Nombre completo de quien se registró, para la entrada y el PDF.
+  const nombreCompleto =
+    `${lastSubmission?.nombre ?? ""} ${lastSubmission?.apellido ?? ""}`.trim() || "Invitada";
+
+  async function handleDownloadPdf() {
+    const node = ticketRef.current;
+    if (!node) return;
+    setGenerandoPdf(true);
+    setPdfError(false);
+    try {
+      await descargarEntradaPdf(node, `entrada-legitimas-${uuid ?? "invitada"}.pdf`);
+    } catch {
+      setPdfError(true);
+    } finally {
+      setGenerandoPdf(false);
+    }
+  }
+
   return (
+    <>
     <dialog
       ref={dialogRef}
       id="join-dialog"
@@ -173,9 +200,24 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
                 <p className="join-qr-caption">Muestra este código en la entrada</p>
               </div>
             )}
-            <button type="button" className="join-submit" onClick={onClose}>
-              Cerrar
-            </button>
+            <div className="join-actions">
+              <button
+                type="button"
+                className="join-submit"
+                onClick={handleDownloadPdf}
+                disabled={generandoPdf || !qrDataUrl}
+              >
+                {generandoPdf ? "Generando PDF…" : "Descargar entrada (PDF)"}
+              </button>
+              {pdfError && (
+                <p className="join-download-error" role="alert">
+                  No pudimos generar el PDF. Probá de nuevo.
+                </p>
+              )}
+              <button type="button" className="join-secondary" onClick={onClose}>
+                Cerrar
+              </button>
+            </div>
           </div>
         ) : status === "error" ? (
           <div className="join-fallback" role="alert">
@@ -265,5 +307,16 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
         )}
       </div>
     </dialog>
+
+      {/* Ticket fuera de pantalla: se captura con html2canvas para el PDF.
+          Vive fuera del <dialog> para que ningún overflow lo recorte. */}
+      {status === "success" && uuid && qrDataUrl && (
+        <div className="ticket-capture" aria-hidden="true">
+          <div ref={ticketRef}>
+            <EntradaTicket nombre={nombreCompleto} qrDataUrl={qrDataUrl} uuid={uuid} />
+          </div>
+        </div>
+      )}
+    </>
   );
 }

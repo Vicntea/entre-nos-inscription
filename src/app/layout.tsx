@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Mono } from "next/font/google";
+import { Cinzel, Cormorant_Garamond, DM_Mono } from "next/font/google";
 import "./globals.css";
 
 const dmMono = DM_Mono({
@@ -7,6 +7,22 @@ const dmMono = DM_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
 });
+
+/* Tipografías de la entrada (ver src/components/EntradaTicket.tsx), tomadas de
+   src/templates/registro.html: Cinzel para títulos y Cormorant para el resto. */
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  weight: ["500", "700", "900"],
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  style: ["normal", "italic"],
+});
+
 
 export const metadata: Metadata = {
   title: "ENTRE NOS — Archivo Feminista",
@@ -24,7 +40,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${dmMono.variable} h-full antialiased`}>
+    <html
+      lang="es"
+      className={`${dmMono.variable} ${cinzel.variable} ${cormorant.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

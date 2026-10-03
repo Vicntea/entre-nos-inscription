@@ -957,5 +957,319 @@ body {
   cursor: wait;
 }
 
+/* =====================================================
+   ENTRADA (TICKET) — pantalla de éxito + PDF descargable.
+   Réplica de src/templates/registro.html usando colores sólidos
+   (sin backdrop-filter) para que la captura con html2canvas sea fiel.
+   ===================================================== */
+/* Contenedor fuera de pantalla: se captura para generar el PDF, sin que la
+   persona lo vea. `position: fixed` escapa del recorte de `overflow`. */
+.ticket-capture {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  width: 920px;
+  pointer-events: none;
+}
+
+.ticket {
+  width: 920px;
+  background: #111116;
+  border: 1px solid rgba(153, 27, 27, 0.6);
+  border-radius: 18px;
+  overflow: hidden;
+  color: #e5e7eb;
+  font-family: var(--font-dm-mono), monospace;
+  box-shadow: 0 0 35px rgba(139, 0, 0, 0.35);
+}
+
+.ticket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 24px;
+  background: linear-gradient(90deg, #2b0b0b, #101014 45%, #2b0b0b);
+  border-bottom: 1px solid rgba(127, 29, 29, 0.7);
+}
+
+.ticket-header-tags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ticket-chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fca5a5;
+  background: rgba(153, 27, 27, 0.35);
+  border: 1px solid rgba(185, 28, 28, 0.5);
+}
+
+.ticket-header-divider {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+}
+
+.ticket-header-pass {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #d4d4d8;
+}
+
+.ticket-body {
+  display: grid;
+  grid-template-columns: 1fr 40px 264px;
+}
+
+.ticket-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 26px 30px;
+}
+
+.ticket-title {
+  font-family: var(--font-cinzel), "Times New Roman", serif;
+  font-weight: 900;
+  font-size: 46px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f8fafc;
+  text-shadow: 0 0 18px rgba(220, 38, 38, 0.45);
+}
+
+.ticket-subtitle {
+  margin-top: 4px;
+  font-family: var(--font-cormorant), "Times New Roman", serif;
+  font-style: italic;
+  font-size: 20px;
+  color: #fecaca;
+}
+
+.ticket-rule {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(153, 27, 27, 0.9), rgba(220, 38, 38, 0.3), transparent);
+}
+
+.ticket-label {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-cinzel), "Times New Roman", serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+}
+
+.ticket-name {
+  font-family: var(--font-cormorant), "Times New Roman", serif;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.1;
+  color: #ffffff;
+  text-transform: capitalize;
+}
+
+.ticket-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ticket-meta-card {
+  padding: 11px 14px;
+  background: rgba(9, 9, 11, 0.75);
+  border: 1px solid rgba(69, 10, 10, 0.9);
+  border-radius: 10px;
+}
+
+.ticket-meta-card--wide {
+  grid-column: 1 / -1;
+}
+
+.ticket-meta-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #f87171;
+}
+
+.ticket-meta-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.ticket-synopsis {
+  padding: 12px 14px;
+  background: rgba(69, 10, 10, 0.22);
+  border-left: 3px solid #dc2626;
+  border-radius: 0 10px 10px 0;
+}
+
+.ticket-synopsis-label {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-cinzel), "Times New Roman", serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #f87171;
+}
+
+.ticket-synopsis-text {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #d4d4d8;
+}
+
+/* Divisor vertical con muescas de ticket */
+.ticket-divider {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.ticket-dash {
+  width: 2px;
+  height: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgba(220, 38, 38, 0.5) 40%
+  );
+  background-size: 2px 14px;
+  background-repeat: repeat-y;
+}
+
+.ticket-cutout {
+  position: absolute;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #0b0b10;
+  border: 1px solid rgba(153, 27, 27, 0.6);
+  transform: translateX(-50%);
+}
+
+.ticket-cutout--top {
+  top: -13px;
+}
+
+.ticket-cutout--bottom {
+  bottom: -13px;
+}
+
+.ticket-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 26px 24px;
+  text-align: center;
+  background: rgba(69, 10, 10, 0.18);
+}
+
+.ticket-qr-label {
+  font-family: var(--font-cinzel), "Times New Roman", serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fca5a5;
+}
+
+.ticket-qr-box {
+  padding: 12px;
+  background: #ffffff;
+  border: 2px solid rgba(220, 38, 38, 0.55);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  line-height: 0;
+}
+
+.ticket-qr-box img {
+  display: block;
+  width: 170px;
+  height: 170px;
+}
+
+.ticket-qr-caption {
+  max-width: 190px;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: #a1a1aa;
+}
+
+.ticket-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 24px;
+  border-top: 1px solid rgba(69, 10, 10, 0.9);
+  font-size: 11px;
+}
+
+.ticket-footer-warn {
+  color: #fca5a5;
+}
+
+.ticket-footer-id {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #71717a;
+}
+
+/* ---- Acciones de la pantalla de éxito (descargar / cerrar) ---- */
+.join-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.join-secondary {
+  background: none;
+  border: none;
+  padding: 8px;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #111;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.join-secondary:hover {
+  opacity: 1;
+  color: var(--purple);
+}
+
+.join-download-error {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #b3123e;
+}
+
+
+
 
 
