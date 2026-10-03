@@ -15,13 +15,12 @@ function idCorto(uuid: string): string {
 }
 
 /**
- * Entrada (ticket) de la obra LEGÍTIMAS. Es una versión fiel de
- * `src/templates/registro.html` que se muestra en la pantalla de éxito y se usa
- * para generar el PDF descargable. Usa colores sólidos (sin `backdrop-filter`)
- * para que la captura con html2canvas salga fiel.
- *
- * Es de tamaño fijo (ver `.ticket` en globals.css) para que el PDF tenga
- * siempre la misma composición horizontal.
+ * Entrada (ticket) de la obra LEGÍTIMAS, en formato **vertical** (proporción de
+ * celular) para que el PDF se vea grande en el teléfono y llene la página sin
+ * dejar tanto relleno oscuro. Es una adaptación de
+ * `src/templates/registro.html` y se usa únicamente para generar el PDF
+ * descargable (se renderiza fuera de pantalla). Usa colores sólidos (sin
+ * `backdrop-filter`) para que la captura con html2canvas salga fiel.
  */
 export default function EntradaTicket({ nombre, qrDataUrl, uuid }: EntradaTicketProps) {
   return (
@@ -36,48 +35,45 @@ export default function EntradaTicket({ nombre, qrDataUrl, uuid }: EntradaTicket
       </div>
 
       <div className="ticket-body">
-        {/* Detalles de la entrada */}
-        <div className="ticket-details">
-          <div>
-            <h2 className="ticket-title">LEGÍTIMAS</h2>
-            <p className="ticket-subtitle">Nunca más sin nosotras</p>
+        <div className="ticket-hero">
+          <h2 className="ticket-title">LEGÍTIMAS</h2>
+          <p className="ticket-subtitle">Nunca más sin nosotras</p>
+        </div>
+
+        <div className="ticket-rule" />
+
+        <div>
+          <span className="ticket-label">Persona Registrada</span>
+          <h3 className="ticket-name">{nombre}</h3>
+        </div>
+
+        <div className="ticket-meta">
+          <div className="ticket-meta-card">
+            <span className="ticket-meta-label">Fecha y Hora</span>
+            <p className="ticket-meta-value">{EVENTO.fecha}</p>
           </div>
 
-          <div className="ticket-rule" />
-
-          <div>
-            <span className="ticket-label">Persona Registrada</span>
-            <h3 className="ticket-name">{nombre}</h3>
+          <div className="ticket-meta-card">
+            <span className="ticket-meta-label">Ubicación</span>
+            <p className="ticket-meta-value">{EVENTO.lugar}</p>
           </div>
 
-          <div className="ticket-meta">
-            <div className="ticket-meta-card">
-              <span className="ticket-meta-label">Fecha y Hora</span>
-              <p className="ticket-meta-value">{EVENTO.fecha}</p>
-            </div>
-
-            <div className="ticket-meta-card">
-              <span className="ticket-meta-label">Ubicación</span>
-              <p className="ticket-meta-value">{EVENTO.lugar}</p>
-            </div>
-
-            <div className="ticket-meta-card ticket-meta-card--wide">
-              <span className="ticket-meta-label">Duración Estimada</span>
-              <p className="ticket-meta-value">{EVENTO.duracion}</p>
-            </div>
-          </div>
-
-          <div className="ticket-synopsis">
-            <span className="ticket-synopsis-label">Reseña / Sinopsis</span>
-            <p className="ticket-synopsis-text">{EVENTO.sinopsis}</p>
+          <div className="ticket-meta-card ticket-meta-card--wide">
+            <span className="ticket-meta-label">Duración Estimada</span>
+            <p className="ticket-meta-value">{EVENTO.duracion}</p>
           </div>
         </div>
 
-        {/* Divisor vertical con muescas de ticket */}
-        <div className="ticket-divider" aria-hidden="true">
-          <div className="ticket-dash" />
-          <span className="ticket-cutout ticket-cutout--top" />
-          <span className="ticket-cutout ticket-cutout--bottom" />
+        <div className="ticket-synopsis">
+          <span className="ticket-synopsis-label">Reseña / Sinopsis</span>
+          <p className="ticket-synopsis-text">{EVENTO.sinopsis}</p>
+        </div>
+
+        {/* Divisor horizontal con muescas de ticket */}
+        <div className="ticket-divider-h" aria-hidden="true">
+          <div className="ticket-dash-h" />
+          <span className="ticket-cutout ticket-cutout--left" />
+          <span className="ticket-cutout ticket-cutout--right" />
         </div>
 
         {/* Bloque de acreditación con QR */}
@@ -86,7 +82,7 @@ export default function EntradaTicket({ nombre, qrDataUrl, uuid }: EntradaTicket
           <div className="ticket-qr-box">
             {/* data URL generado en el cliente: no pasa por el optimizador */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={qrDataUrl} alt="Código QR de la entrada" width={170} height={170} />
+            <img src={qrDataUrl} alt="Código QR de la entrada" width={200} height={200} />
           </div>
           <p className="ticket-qr-caption">
             Escanear para verificar el acceso en la entrada del {EVENTO.lugarCorto}.
@@ -104,3 +100,4 @@ export default function EntradaTicket({ nombre, qrDataUrl, uuid }: EntradaTicket
     </div>
   );
 }
+
