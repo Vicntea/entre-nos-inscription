@@ -220,6 +220,13 @@ body {
   backdrop-filter: blur(3px);
 }
 
+/* Con el preview del afiche abierto el velo se aligera: así se ve el
+   fondo (fotos/canvas) por detrás del visor tipo PDF. */
+.join-dialog.is-poster-open::backdrop {
+  background: rgba(8, 6, 10, 0.3);
+  backdrop-filter: none;
+}
+
 .join-dialog-body {
   position: relative;
   background: var(--paper);
@@ -325,12 +332,155 @@ body {
   line-height: 1.6;
 }
 
-.join-poster {
+/* El afiche es un botón: al tocarlo se abre el preview a pantalla completa. */
+.join-poster-button {
   display: block;
   width: min(70%, 260px);
-  height: auto;
   margin: 14px auto 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.join-poster-button:focus-visible {
+  outline: none;
+}
+
+.join-poster-button:hover .join-poster,
+.join-poster-button:focus-visible .join-poster {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.42), 0 0 0 3px var(--purple);
+}
+
+.join-poster {
+  display: block;
+  width: 100%;
+  height: auto;
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.25s ease;
+}
+
+/* =====================================================
+   PREVIEW DEL AFICHE — visor tipo PDF a pantalla completa.
+   La página queda centrada sobre barras oscuras y el fondo
+   es semitransparente: deja entrever las fotos y el canvas
+   que corren por detrás del diálogo.
+   ===================================================== */
+.poster-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 0
+    calc(env(safe-area-inset-bottom, 0px) + 12px);
+  overflow: hidden;
+  background: rgba(6, 5, 8, 0.58);
+  backdrop-filter: blur(3px);
+  animation: poster-lightbox-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes poster-lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* La página: se ajusta sola al alto disponible y respeta la proporción,
+   así el afiche se ve completo y las barras quedan a los costados. */
+.poster-lightbox-image {
+  display: block;
+  justify-self: center;
+  align-self: center;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 30px 80px rgba(0, 0, 0, 0.6);
+  animation: poster-lightbox-page 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes poster-lightbox-page {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Barras de controles: arriba a la derecha (descargar + cerrar) y
+   abajo centrada (cerrar zoom), sobre el mismo aire oscuro. */
+.poster-lightbox-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+}
+
+.poster-lightbox-bar--top {
+  justify-content: flex-end;
+}
+
+.poster-lightbox-bar--bottom {
+  justify-content: center;
+}
+
+.poster-lightbox-btn,
+.poster-lightbox-zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(244, 241, 235, 0.35);
+  background: rgba(17, 17, 17, 0.5);
+  color: var(--paper);
+  font-family: inherit;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.poster-lightbox-btn {
+  padding: 9px 14px;
+  font-size: 10px;
+}
+
+.poster-lightbox-zoom {
+  padding: 11px 22px;
+  font-size: 10px;
+}
+
+.poster-lightbox-btn:hover,
+.poster-lightbox-btn:focus-visible,
+.poster-lightbox-zoom:hover,
+.poster-lightbox-zoom:focus-visible {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: var(--paper);
+  outline: none;
+}
+
+.poster-lightbox-close {
+  padding: 8px 11px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* Ícono de descarga sutil, dibujado sin assets extra. */
+.poster-lightbox-download::before {
+  content: "↓";
+  font-size: 12px;
 }
 
 .join-form {

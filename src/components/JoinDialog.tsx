@@ -6,6 +6,7 @@ import {
   useState,
   type FormEvent,
   type MouseEvent as ReactMouseEvent,
+  type SyntheticEvent,
 } from "react";
 import Image from "next/image";
 import { guardarInscripcion, type InscripcionData } from "@/lib/inscripcion";
@@ -41,6 +42,8 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
   const [lastSubmission, setLastSubmission] = useState<InscripcionData | null>(null);
   // Toggle descriptivo de la obra (texto + afiche)
   const [showInfo, setShowInfo] = useState(false);
+  // Preview a pantalla completa del afiche (visor tipo PDF)
+  const [posterOpen, setPosterOpen] = useState(false);
   // uuid confirmado y su QR (data URL) para mostrarlo en la pantalla de éxito
   const [uuid, setUuid] = useState<string | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -55,6 +58,7 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
     if (open && !dialog.open) {
       setStatus("idle");
       setShowInfo(false);
+      setPosterOpen(false);
       setUuid(null);
       setQrDataUrl(null);
       setGenerandoPdf(false);
@@ -89,6 +93,14 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
   const handleBackdropClick = (event: ReactMouseEvent<HTMLDialogElement>) => {
     if (event.target === dialogRef.current && pressStartedOnBackdrop.current) {
       onClose();
+    }
+  };
+
+  // ESC cierra primero el preview del afiche; el diálogo queda abierto.
+  const handleDialogCancel = (event: SyntheticEvent<HTMLDialogElement>) => {
+    if (posterOpen) {
+      event.preventDefault();
+      setPosterOpen(false);
     }
   };
 
@@ -140,8 +152,9 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
     <dialog
       ref={dialogRef}
       id="join-dialog"
-      className="join-dialog"
+      className={`join-dialog${posterOpen ? " is-poster-open" : ""}`}
       onClose={onClose}
+      onCancel={handleDialogCancel}
       onMouseDown={handleBackdropMouseDown}
       onClick={handleBackdropClick}
       aria-labelledby="join-dialog-title"
@@ -176,14 +189,22 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
                 Vas a registrarte para la obra que se presenta en el Cine UACH el 30 de diciembre.
                 Al terminar te damos un código QR: es tu entrada, no lo compartas.
               </p>
-              <Image
-                className="join-poster"
-                src="/images/legitimas_afiche.png"
-                alt="Afiche de la obra en el Cine UACH el 30 de diciembre"
-                width={590}
-                height={834}
-                sizes="(max-width: 600px) 70vw, 260px"
-              />
+              <button
+                type="button"
+                className="join-poster-button"
+                onClick={() => setPosterOpen(true)}
+                aria-haspopup="dialog"
+                aria-label="Ampliar el afiche de la obra"
+              >
+                <Image
+                  className="join-poster"
+                  src="/images/legitimas_afiche.png"
+                  alt="Afiche de la obra en el Cine UACH el 30 de diciembre"
+                  width={590}
+                  height={834}
+                  sizes="(max-width: 600px) 70vw, 260px"
+                />
+              </button>
             </div>
           </>
         )}
@@ -306,6 +327,50 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
           </form>
         )}
       </div>
+
+      {/* Preview del afiche: hijo directo del <dialog> para quedar en la
+          top-layer. Es fixed, cubre el viewport y deja ver por detrás
+          (opacity) las fotos y el canvas del sitio. */}
+      {posterOpen && (
+        <div
+          className="poster-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Afiche de la obra ampliado"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) setPosterOpen(false);
+          }}
+        >
+          <div className="poster-lightbox-bar poster-lightbox-bar--top">
+            <a
+              className="poster-lightbox-btn poster-lightbox-download"
+              href="/images/legitimas_afiche.png"
+              download="legitimas-afiche.png"
+            >
+              Descargar
+            </a>
+            <button
+              type="button"
+              className="poster-lightbox-btn poster-lightbox-close"
+              onClick={() => setPosterOpen(false)}
+              aria-label="Cerrar"
+              autoFocus
+            >
+              ✕
+            </button>
+          </div>
+
+          <Image
+            className="poster-lightbox-image"
+            src="/images/legitimas_afiche.png"
+            alt="Afiche de la obra en el Cine UACH el 30 de diciembre"
+            width={590}
+            height={834}
+            sizes="100vw"
+          />
+
+        </div>
+      )}
     </dialog>
 
       {/* Ticket fuera de pantalla: se captura con html2canvas para el PDF.
