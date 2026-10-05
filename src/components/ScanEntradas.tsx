@@ -122,7 +122,7 @@ export default function ScanEntradas() {
       <header className="scan-header">
         <span className="scan-eyebrow">ENTRE NOS — REVISOR DE ENTRADAS</span>
         <h1 className="scan-title">Escaneá la entrada</h1>
-        <p className="scan-sub">Cine UACH · 30 de diciembre</p>
+        <p className="scan-sub">Cine UACH · 30 de octubre</p>
       </header>
 
       <div className={`scan-stage ${escaneando ? "is-active" : ""}`}>

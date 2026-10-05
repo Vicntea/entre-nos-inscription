@@ -178,7 +178,7 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
               aria-controls="join-info"
               onClick={() => setShowInfo((prev) => !prev)}
             >
-              <span>Registrate a una obra en el Cine UACH · 30 de diciembre</span>
+              <span>Registrate a una obra en el Cine UACH · 30 de octubre</span>
               <span className="join-info-toggle-icon" aria-hidden="true">
                 {showInfo ? "−" : "+"}
               </span>
@@ -186,7 +186,7 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
 
             <div id="join-info" className="join-info" hidden={!showInfo}>
               <p className="join-info-text">
-                Vas a registrarte para la obra que se presenta en el Cine UACH el 30 de diciembre.
+                Vas a registrarte para la obra que se presenta en el Cine UACH el 30 de octubre.
                 Al terminar te damos un código QR: es tu entrada, no lo compartas.
               </p>
               <button
@@ -199,7 +199,7 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
                 <Image
                   className="join-poster"
                   src="/images/legitimas_afiche.png"
-                  alt="Afiche de la obra en el Cine UACH el 30 de diciembre"
+                  alt="Afiche de la obra en el Cine UACH el 30 de octubre"
                   width={590}
                   height={834}
                   sizes="(max-width: 600px) 70vw, 260px"
@@ -363,7 +363,7 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
           <Image
             className="poster-lightbox-image"
             src="/images/legitimas_afiche.png"
-            alt="Afiche de la obra en el Cine UACH el 30 de diciembre"
+            alt="Afiche de la obra en el Cine UACH el 30 de octubre"
             width={590}
             height={834}
             sizes="100vw"
