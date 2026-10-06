@@ -19,7 +19,7 @@ export default function JoinTab() {
         <span className="join-tab-tip" aria-hidden="true">
           ▲
         </span>
-        <span className="join-tab-label">¿Quieres ser parte del cambio?</span>
+        <span className="join-tab-label">Inscribete</span>
       </button>
 
       <JoinDialog open={open} onClose={() => setOpen(false)} />
