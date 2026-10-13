@@ -34,7 +34,7 @@ export async function descargarEntradaPdf(
 
   const canvas = await html2canvas(node, {
     scale: SCALE,
-    backgroundColor: "#111116",
+    backgroundColor: "#160809",
     useCORS: true,
     logging: false,
   });
@@ -68,7 +68,7 @@ export async function descargarEntradaPdf(
   });
 
   // Fondo oscuro en toda la página (bandas de arriba/abajo del ticket).
-  pdf.setFillColor(17, 17, 22);
+  pdf.setFillColor(22, 8, 9);
   pdf.rect(0, 0, pageWidth, pageHeight, "F");
 
   pdf.addImage(imgData, "PNG", x, y, renderWidth, renderHeight);
