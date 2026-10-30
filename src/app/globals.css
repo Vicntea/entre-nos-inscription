@@ -29,6 +29,84 @@ body {
   user-select: none;
 }
 
+/* =====================================================
+   QR A PANTALLA COMPLETA — /entrada/[uuid]
+   ===================================================== */
+.entrada-qr-page {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top, 0px))
+    max(20px, env(safe-area-inset-right, 0px))
+    max(20px, env(safe-area-inset-bottom, 0px))
+    max(20px, env(safe-area-inset-left, 0px));
+  background: #111;
+}
+
+.entrada-qr-image {
+  display: block;
+  box-sizing: border-box;
+  width: min(92vw, 760px);
+  max-height: calc(100dvh - 120px);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  padding: clamp(12px, 2.5vw, 28px);
+  background: #fff;
+  image-rendering: pixelated;
+}
+
+.entrada-qr-actions {
+  display: flex;
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right, 0px));
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  left: max(20px, env(safe-area-inset-left, 0px));
+  justify-content: center;
+  gap: 10px;
+}
+
+.entrada-qr-download {
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #111;
+  color: var(--paper);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.entrada-qr-download:hover:not(:disabled) {
+  background: var(--purple);
+}
+
+.entrada-qr-download:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.entrada-qr-error {
+  position: absolute;
+  bottom: 52px;
+  color: #ff9a9a;
+  font-size: 11px;
+}
+
+@media (max-width: 480px) {
+  .entrada-qr-actions {
+    flex-direction: column;
+  }
+
+  .entrada-qr-error {
+    bottom: 104px;
+  }
+}
+
 /* Escenario a pantalla completa.
    Con `h-screen` la barra del navegador móvil recorta el fondo: `100dvh`
    sigue al viewport visible. Se deja `100vh` primero como respaldo para
@@ -538,6 +616,7 @@ body {
 }
 
 .join-submit {
+  display: block;
   margin-top: 4px;
   background: #111;
   color: var(--paper);
@@ -547,6 +626,8 @@ body {
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -1419,8 +1500,4 @@ body {
   line-height: 1.5;
   color: #b3123e;
 }
-
-
-
-
 

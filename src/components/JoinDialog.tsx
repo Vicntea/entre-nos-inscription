@@ -9,6 +9,7 @@ import {
   type SyntheticEvent,
 } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { guardarInscripcion, type InscripcionData } from "@/lib/inscripcion";
 import { generateQr } from "@/utils/generateQr";
 import { descargarEntradaPdf } from "@/utils/ticketPdf";
@@ -222,6 +223,11 @@ export default function JoinDialog({ open, onClose }: JoinDialogProps) {
               </div>
             )}
             <div className="join-actions">
+              {uuid && (
+                <Link className="join-submit" href={`/entrada/${encodeURIComponent(uuid)}`}>
+                  Abrir QR a pantalla completa
+                </Link>
+              )}
               <button
                 type="button"
                 className="join-submit"
